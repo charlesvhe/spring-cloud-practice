@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>metadata</title>
+    <script src="/vue.js"></script>
+    <script src="/vue-resource.js"></script>
+    <script type="text/x-template" id="application-template">
+        <li>
+            {{applicationName}}
+            <ul>
+                <instance v-for="instance in instanceList" :key="instance.instanceId"
+                          :application-name="applicationName" :instance-id="instance.instanceId" :metadata="instance.metadata"/>
+            </ul>
+        </li>
+    </script>
+
+    <script type="text/x-template" id="instance-template">
+        <li>
+            {{instanceId}}
+            <ul>
+                metadata:
+                <li v-for="(value, key) in metadata" :key="key" >
+                    {{key}}: {{value}}
+                </li>
+                {{metadataKey}}:{{metadataValue}} <br/>
+                <select v-model="metadataKey">
+                    <option>weight</option>
+                    <option>labelOr</option>
+                    <option>labelAnd</option>
+                </select>:<input v-model="metadataValue"/> <button @click="putMetadata">PUT</button>
+            </ul>
+        </li>
+    </script>
+</head>
+<body>
+<div id="app">
+    <ul id="applications">
+        <application v-for="application in applicationList" :key="application.name"
+                     :application-name="application.name" :instance-list="application.instance"/>
+    </ul>
+</div>
+
+<script type="text/javascript">
+Vue.component('application', {
+    template:'#application-template',
+    props:{applicationName:String, instanceList:Array}
+});
+
+Vue.component('instance', {
+    template:'#instance-template',
+    data:function(){
+        return {metadataKey:'weight', metadataValue:''};
+    },
+    props:{applicationName:String, instanceId:String, metadata:Object},
+    methods:{
+        putMetadata: function(){
+            var url = '/eureka/apps/'+this.applicationName+'/'+this.instanceId
+                    +'/metadata?'+this.metadataKey+'='+this.metadataValue;
+            this.$http.put(url).then(
+            function(response){
+                console.info(response);
+                alert('success, please refresh page.');
+            },function(response){
+                console.info(response);
+            });
+        }
+    }
+});
+
+
+new Vue({
+    el:'#app',
+    data:{applicationList:[]},
+    mounted:function(){
+        this.$http.get('/eureka/apps').then(function(response){
+            console.info(response.body.applications);
+            this.$data.applicationList = response.body.applications.application;
+        },function(response){
+            console.info(response);
+        });
+    }
+});
+</script>
+</body>
+</html>
