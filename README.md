@@ -1,5 +1,7 @@
 # spring cloud 实践
 
+![metadata管理页面](https://raw.githubusercontent.com/charlesvhe/spring-cloud-practice/master/metadata.html.png)
+
 ## 项目结构
 ### config 配置中心
 端口：8888，方便起见直接读取配置文件，生产环境可以读取git。application-dev.properties为全局配置。先启动配置中心，所有服务的配置（包括注册中心的地址）均从配置中心读取。
