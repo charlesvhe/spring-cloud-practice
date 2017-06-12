@@ -38,6 +38,7 @@
         <module>config</module>
         <module>eureka</module>
         <module>zuul</module>
+        <module>route</module>
         <module>provider</module>
         <module>consumer</module>
     </modules>

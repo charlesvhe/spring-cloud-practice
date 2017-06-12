@@ -21,8 +21,7 @@ public class TestController {
     private RestTemplate restTemplate;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String test(@RequestHeader("x-label") String label) {
-        logger.info("label: " + label);
+    public String test() {
         String result = restTemplate.getForObject("http://provider/user", String.class);
         return result;
     }

@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS route_rule;
+
+CREATE TABLE rule(
+    id INT IDENTITY PRIMARY KEY,
+    service VARCHAR(255) NOT NULL,
+    strategy VARCHAR(255) NOT NULL,
+    content VARCHAR(255) NOT NULL,
+    zone VARCHAR(255) NOT NULL,
+    rank INT NOT NULL
+);

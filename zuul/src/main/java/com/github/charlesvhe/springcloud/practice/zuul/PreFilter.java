@@ -1,6 +1,5 @@
 package com.github.charlesvhe.springcloud.practice.zuul;
 
-import com.github.charlesvhe.springcloud.practice.core.CoreHeaderInterceptor;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import org.slf4j.Logger;
@@ -51,9 +50,6 @@ public class PreFilter extends ZuulFilter {
         String labels = TOKEN_LABEL_MAP.get(token);
 
         logger.info("label: " + labels);
-
-        CoreHeaderInterceptor.initHystrixRequestContext(labels); // zuul本身调用微服务
-        ctx.addZuulRequestHeader(CoreHeaderInterceptor.HEADER_LABEL, labels); // 传递给后续微服务
 
         return null;
     }
