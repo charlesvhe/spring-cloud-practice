@@ -1,29 +1,21 @@
 package com.github.charlesvhe.springcloud.practice.zuul;
 
+import com.github.charlesvhe.springcloud.practice.core.CoreHystrixRequestContext;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Charles on 2016/8/26.
  */
 public class PreFilter extends ZuulFilter {
-    private static final HashMap<String, String> TOKEN_LABEL_MAP = new HashMap<>();
-
-    static {
-        TOKEN_LABEL_MAP.put("emt", "EN,Male,Test");
-        TOKEN_LABEL_MAP.put("eft", "EN,Female,Test");
-        TOKEN_LABEL_MAP.put("cmt", "CN,Male,Test");
-        TOKEN_LABEL_MAP.put("cft", "CN,Female,Test");
-        TOKEN_LABEL_MAP.put("em", "EN,Male");
-        TOKEN_LABEL_MAP.put("ef", "EN,Female");
-        TOKEN_LABEL_MAP.put("cm", "CN,Male");
-        TOKEN_LABEL_MAP.put("cf", "CN,Female");
-    }
 
     private static final Logger logger = LoggerFactory.getLogger(PreFilter.class);
 
@@ -45,11 +37,23 @@ public class PreFilter extends ZuulFilter {
     @Override
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
-        String token = ctx.getRequest().getHeader(HttpHeaders.AUTHORIZATION);
 
-        String labels = TOKEN_LABEL_MAP.get(token);
+        // 添加outgoing herder给zuul内部转发路由
+        ConcurrentHashMap<String, Collection<String>> outgoingHeader = new ConcurrentHashMap<>();
+        CoreHystrixRequestContext.outgoingHeader.set(outgoingHeader);
 
-        logger.info("label: " + labels);
+        Enumeration<String> headerNames = ctx.getRequest().getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+
+            Enumeration<String> headers = ctx.getRequest().getHeaders(headerName);
+            List<String> headerList = new ArrayList<>();
+            while (headers.hasMoreElements()) {
+                headerList.add(headers.nextElement());
+            }
+
+            outgoingHeader.put(headerName, headerList);
+        }
 
         return null;
     }

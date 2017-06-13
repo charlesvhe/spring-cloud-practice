@@ -13,6 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by charles on 2017/6/9.
  */
 public class CoreHystrixRequestContext {
+    public static final String OUT_HEADER_ROUTE_SUB = "x-route-sub";
+    public static final String OUT_HEADER_ROUTE_STRATEGY = "x-route-strategy";
+    public static final String OUT_HEADER_ROUTE_CONTENT = "x-route-content";
+
     public static final HystrixRequestVariableDefault<ConcurrentHashMap<String, String>> incomingHeader = new HystrixRequestVariableDefault<>();
     public static final HystrixRequestVariableDefault<ConcurrentHashMap<String, Collection<String>>> outgoingHeader = new HystrixRequestVariableDefault<>();
 }

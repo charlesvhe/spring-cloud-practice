@@ -6,13 +6,11 @@ import com.netflix.config.DeploymentContext;
 import com.netflix.loadbalancer.AbstractServerPredicate;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.PredicateKey;
-import org.apache.commons.configuration.AbstractConfiguration;
-import org.apache.commons.configuration.Configuration;
+import org.springframework.cloud.netflix.ribbon.DefaultPropertiesFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,20 +24,10 @@ public class ZonesAffinityPredicate extends AbstractServerPredicate {
     public ZonesAffinityPredicate(IRule rule, IClientConfig clientConfig) {
         super(rule, clientConfig);
 
-        // 优先使用个性化配置 <client>.ribbon.*
-        String clientZones = (String) clientConfig.getProperties().get(CORE_ZONES);
-        if (StringUtils.hasText(clientZones)) {   // 优先使用个性化配置
-            this.zones = Arrays.asList(StringUtils.tokenizeToStringArray(clientZones, ","));
-            return;
-        }
-
-        // 读取全局配置 ribbon.*
-        AbstractConfiguration config = ConfigurationManager.getConfigInstance();
-        Configuration ribbon = config.subset(clientConfig.getNameSpace());
-        String clientsZones = ribbon.getString(ZonesAffinityPredicate.CORE_ZONES);
-
-        if (StringUtils.hasText(clientsZones)) {   // 使用全局配置
+        String clientsZones = DefaultPropertiesFactory.getClientConfig(clientConfig, ZonesAffinityPredicate.CORE_ZONES);
+        if (StringUtils.hasText(clientsZones)) {
             this.zones = Arrays.asList(StringUtils.tokenizeToStringArray(clientsZones, ","));
+            return;
         }
 
         // 仅使用本zone
@@ -50,7 +38,7 @@ public class ZonesAffinityPredicate extends AbstractServerPredicate {
 
     @Override
     public boolean apply(PredicateKey input) {
-        if (CollectionUtils.isEmpty(this.zones)){
+        if (CollectionUtils.isEmpty(this.zones)) {
             return true;
         }
 
