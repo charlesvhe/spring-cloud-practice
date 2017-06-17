@@ -1,6 +1,7 @@
 package com.github.charlesvhe.springcloud.practice.core;
 
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableDefault;
+import org.springframework.http.HttpHeaders;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +18,6 @@ public class CoreHystrixRequestContext {
     public static final String OUT_HEADER_ROUTE_STRATEGY = "x-route-strategy";
     public static final String OUT_HEADER_ROUTE_CONTENT = "x-route-content";
 
-    public static final HystrixRequestVariableDefault<ConcurrentHashMap<String, String>> incomingHeader = new HystrixRequestVariableDefault<>();
-    public static final HystrixRequestVariableDefault<ConcurrentHashMap<String, Collection<String>>> outgoingHeader = new HystrixRequestVariableDefault<>();
+    public static final HystrixRequestVariableDefault<HttpHeaders> incomingHeader = new HystrixRequestVariableDefault<>();
+    public static final HystrixRequestVariableDefault<HttpHeaders> outgoingHeader = new HystrixRequestVariableDefault<>();
 }

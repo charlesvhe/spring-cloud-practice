@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.github.charlesvhe.springcloud.practice.core.CoreAutoConfiguration
+  com.github.charlesvhe.springcloud.practice.core.CoreAutoConfiguration,\
+  com.github.charlesvhe.springcloud.practice.core.CoreFeignAutoConfiguration

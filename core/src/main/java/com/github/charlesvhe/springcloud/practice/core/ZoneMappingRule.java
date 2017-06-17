@@ -5,14 +5,13 @@ import com.google.common.cache.CacheBuilder;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.*;
 import org.springframework.cloud.netflix.ribbon.DefaultPropertiesFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,9 +40,9 @@ public class ZoneMappingRule extends PredicateBasedRule {
         this.zoneCache = CacheBuilder.newBuilder().expireAfterAccess(seconds, TimeUnit.SECONDS).build();
 
         // FIXME 添加测试缓存
-        this.zoneCache.put(getCacheKey("provider",null, "mapping", "1001"),"r1z1");
-        this.zoneCache.put(getCacheKey("provider",null, "mapping", "1002"),"r1z2");
-        this.zoneCache.put(getCacheKey("provider",null, "mapping", "1003"),"r1z1");
+        this.zoneCache.put(getCacheKey("provider", null, "mapping", "1001"), "r1z1");
+        this.zoneCache.put(getCacheKey("provider", null, "mapping", "1002"), "r1z2");
+        this.zoneCache.put(getCacheKey("provider", null, "mapping", "1003"), "r1z1");
 
         this.compositePredicate = CompositePredicate
                 .withPredicates(new AvailabilityPredicate(this, clientConfig))
@@ -80,29 +79,17 @@ public class ZoneMappingRule extends PredicateBasedRule {
 
     private String getZone() {
         // get zone from cache
-        ConcurrentHashMap<String, Collection<String>> header = CoreHystrixRequestContext.outgoingHeader.get();
+        HttpHeaders header = CoreHystrixRequestContext.outgoingHeader.get();
         String service = ((BaseLoadBalancer) this.getLoadBalancer()).getClientConfig().getClientName();
 
         // sub 非必填
-        Collection<String> subList = header.get(CoreHystrixRequestContext.OUT_HEADER_ROUTE_SUB);
-        String sub = null;
-        if (!CollectionUtils.isEmpty(subList)) {
-            sub = subList.iterator().next();
-        }
+        String sub = header.getFirst(CoreHystrixRequestContext.OUT_HEADER_ROUTE_SUB);
 
         // strategy 必填
-        Collection<String> strategyList = header.get(CoreHystrixRequestContext.OUT_HEADER_ROUTE_STRATEGY);
-        if (CollectionUtils.isEmpty(strategyList)) {
-            return null;
-        }
-        String strategy = strategyList.iterator().next();
+        String strategy = header.getFirst(CoreHystrixRequestContext.OUT_HEADER_ROUTE_STRATEGY);
 
         // content 必填
-        Collection<String> contentList = header.get(CoreHystrixRequestContext.OUT_HEADER_ROUTE_CONTENT);
-        if (CollectionUtils.isEmpty(contentList)) {
-            return null;
-        }
-        String content = contentList.iterator().next();
+        String content = header.getFirst(CoreHystrixRequestContext.OUT_HEADER_ROUTE_CONTENT);
 
         String cacheKey = ZoneMappingRule.getCacheKey(service, sub, strategy, content);
         String zone = this.zoneCache.getIfPresent(cacheKey);

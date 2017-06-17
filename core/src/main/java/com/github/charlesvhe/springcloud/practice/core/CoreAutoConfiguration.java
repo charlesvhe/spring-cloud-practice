@@ -1,5 +1,6 @@
 package com.github.charlesvhe.springcloud.practice.core;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.ribbon.DefaultPropertiesFactory;
