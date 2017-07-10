@@ -34,6 +34,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>assembly</module>
         <module>core</module>
         <module>config</module>
         <module>eureka</module>
@@ -48,6 +49,9 @@
             <id>nexus</id>
             <name>Team Nexus Repository</name>
             <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+            <snapshots>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
         </repository>
     </repositories>
 

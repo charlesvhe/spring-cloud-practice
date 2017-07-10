@@ -1,10 +1,9 @@
 package com.github.charlesvhe.springcloud.practice.core;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.*;
-import org.springframework.cloud.netflix.ribbon.DefaultPropertiesFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -12,7 +11,6 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by charles on 2017/6/9.
@@ -21,6 +19,7 @@ public class ZoneMappingRule extends PredicateBasedRule {
     public static final String CORE_ZONE_MAPPING_CACHE_SECONDS = "coreZoneMappingCacheSeconds";
 
     private CompositePredicate compositePredicate;
+    @Autowired
     private Cache<String, String> zoneCache;
     private Random random = new Random();
 
@@ -30,20 +29,6 @@ public class ZoneMappingRule extends PredicateBasedRule {
 
     @Override
     public void initWithNiwsConfig(IClientConfig clientConfig) {
-        String strSeconds = DefaultPropertiesFactory.getClientConfig(clientConfig, ZoneMappingRule.CORE_ZONE_MAPPING_CACHE_SECONDS);
-        int seconds = 1200;
-        try {
-            seconds = Integer.parseInt(strSeconds);
-        } catch (Exception ex) {
-            // do nothing
-        }
-        this.zoneCache = CacheBuilder.newBuilder().expireAfterAccess(seconds, TimeUnit.SECONDS).build();
-
-        // FIXME 添加测试缓存
-        this.zoneCache.put(getCacheKey("provider", null, "mapping", "1001"), "r1z1");
-        this.zoneCache.put(getCacheKey("provider", null, "mapping", "1002"), "r1z2");
-        this.zoneCache.put(getCacheKey("provider", null, "mapping", "1003"), "r1z1");
-
         this.compositePredicate = CompositePredicate
                 .withPredicates(new AvailabilityPredicate(this, clientConfig))
                 // FIXME if no header fallback what?
