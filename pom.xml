@@ -33,6 +33,13 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+    </dependencies>
+
     <modules>
         <module>core</module>
         <module>config</module>
@@ -40,6 +47,7 @@
         <module>zuul</module>
         <module>provider</module>
         <module>consumer</module>
+        <module>zipkin</module>
     </modules>
 
     <repositories>

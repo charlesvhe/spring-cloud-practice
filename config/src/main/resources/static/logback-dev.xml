@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    ​
+    <springProperty name="springAppName" source="spring.application.name"/>
+    <springProperty name="logstashDestination" source="logstash.destination"/>
+
+    <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${logstashDestination}</destination>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {
+                        "index": "logstash-%date{yyyy-MM-dd}",
+                        "level": "%level",
+                        "service": "${springAppName:-}",
+                        "thread": "%thread",
+                        "logger": "%logger",
+                        "message": "%message%exception",
+                        "trace": "%X{X-B3-TraceId:-}",
+                        "span": "%X{X-B3-SpanId:-}",
+                        "parent": "%X{X-B3-ParentSpanId:-}",
+                        "exportable": "%X{X-Span-Export:-}"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+    ​
+    <root level="INFO">
+        <appender-ref ref="logstash"/>
+    </root>
+</configuration>
