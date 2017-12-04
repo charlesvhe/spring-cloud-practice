@@ -1,5 +1,6 @@
 package com.github.charlesvhe.springcloud.practice.consumer.controller;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,11 @@ public class TestController {
         logger.info("label: " + label);
         String result = restTemplate.getForObject("http://provider/user", String.class);
         return result;
+    }
+
+    @RequestMapping(value = "/http2", method = RequestMethod.GET)
+    public String http2() throws Exception {
+
+        return "";
     }
 }

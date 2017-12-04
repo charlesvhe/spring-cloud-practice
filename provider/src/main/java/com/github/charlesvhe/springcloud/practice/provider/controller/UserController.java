@@ -27,7 +27,7 @@ public class UserController {
             sbHeader.append(" [" + headerName + ":" + request.getHeader(headerName) + "] ");
         }
 
-        logger.info("query all " + sbHeader);
+        logger.info("query all " + request.getProtocol() + " " + sbHeader);
         return Arrays.asList(new User(1L, "account1", "password1"),
                 new User(2L, "account2", "password2"),
                 new User(3L, "account3", "password3"));
