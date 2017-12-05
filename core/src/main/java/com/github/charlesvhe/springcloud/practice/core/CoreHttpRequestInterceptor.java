@@ -1,5 +1,6 @@
 package com.github.charlesvhe.springcloud.practice.core;
 
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpRequest;
@@ -21,9 +22,10 @@ public class CoreHttpRequestInterceptor implements ClientHttpRequestInterceptor 
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         HttpRequestWrapper requestWrapper = new HttpRequestWrapper(request);
 
-        String header = StringUtils.collectionToDelimitedString(CoreHeaderInterceptor.label.get(), CoreHeaderInterceptor.HEADER_LABEL_SPLIT);
-        logger.info("label: "+header);
-        requestWrapper.getHeaders().add(CoreHeaderInterceptor.HEADER_LABEL, header);
+        if (HystrixRequestContext.isCurrentThreadInitialized()) {
+            String header = StringUtils.collectionToDelimitedString(CoreHeaderInterceptor.label.get(), CoreHeaderInterceptor.HEADER_LABEL_SPLIT);
+            requestWrapper.getHeaders().add(CoreHeaderInterceptor.HEADER_LABEL, header);
+        }
 
         return execution.execute(requestWrapper, body);
     }
