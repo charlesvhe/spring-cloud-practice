@@ -40,6 +40,7 @@ public class TestController {
                 @Override
                 public void run() {
                     while (true) {
+//                        new RestTemplate().getForObject("http://127.0.0.1:8080/user/" + api, String.class);
                         restTemplate.getForObject("http://provider/user/" + api, String.class);
                         count.incrementAndGet();
                     }
