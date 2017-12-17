@@ -1,5 +1,7 @@
 # spring cloud 使用 HTTP2
 
+![Chrome HTTP2](https://raw.githubusercontent.com/charlesvhe/spring-cloud-practice/http2/chrome.net-internals.png)
+
 我本人是从 Dubbo 转用 Spring cloud。2016年9月左右刚接触 Spring cloud，那个时候跟大家一样做了很多 dubbo vs Spring cloud 的对比分析。当时最大的疑问是性能对比，问 Josh Long 后续有无支持类似于 dubbo 的其他RPC、序列化协议，他说 HTTP2性能已经足够好了，没有计划支持。当时想到 HTTP2是多路复用，长连接，性能损失仅仅是序列化反序列化的区别，因此就此打住没有深入测试。
 
 上周在 W3上看到张琦的帖子里说到 ServiceCombo以性能问题第一个就把 Spring cloud 淘汰了，加上之前的dubbo vs Spring cloud 性能测试结果，就想到用 HTTP2进一步优化 Spring cloud 性能。
