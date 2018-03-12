@@ -1,17 +1,16 @@
 package com.github.charlesvhe.springcloud.practice.consumer.controller;
 
 
+import com.github.charlesvhe.springcloud.practice.core.vo.PageData;
+import com.github.charlesvhe.springcloud.practice.core.vo.Response;
+import com.github.charlesvhe.springcloud.practice.provider.entity.Product;
+import com.github.charlesvhe.springcloud.practice.provider.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by charles on 2017/5/25.
@@ -21,40 +20,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TestController {
     private static final Logger logger = LoggerFactory.getLogger(TestController.class);
 
-    private AtomicInteger count = new AtomicInteger();
-    private int preCount = 0;
-
     @Autowired
-    private RestTemplate restTemplate;
+    private ProductService productService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String test() {
-        String result = restTemplate.getForObject("http://provider/user", String.class);
-        return result;
-    }
+    public Response<PageData<Product, Product>> test() {
+        ProductService.Page page = new ProductService.Page();
+        page.setOffset(100);
+        page.setLimit(5);
 
-    @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public String count(int thread, String api) {
-        for (int i = 0; i < thread; i++) {
-            new Thread() {
-                @Override
-                public void run() {
-                    while (true) {
-//                        new RestTemplate().getForObject("http://127.0.0.1:8080/user/" + api, String.class);
-                        restTemplate.getForObject("http://provider/user/" + api, String.class);
-                        count.incrementAndGet();
-                    }
-                }
-            }.start();
-        }
+        Product filter = new Product();
+        filter.setCategoryId(2L);
+        page.setFilter(filter);
 
-        return System.currentTimeMillis() + "";
-    }
 
-    @Scheduled(fixedRate=1000)
-    public void log(){
-        int curCount = count.get();
-        logger.info("count: " + (curCount-preCount));
-        preCount = curCount;
+        return productService.selectAllGet(page);
     }
 }

@@ -1,45 +1,34 @@
 package com.github.charlesvhe.springcloud.practice.core;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.github.charlesvhe.springcloud.practice.core.feign.CharlesRequestInterceptor;
+import com.github.charlesvhe.springcloud.practice.core.feign.CharlesSpringMvcContract;
+import feign.Contract;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.cloud.commons.httpclient.OkHttpClientFactory;
-import org.springframework.cloud.netflix.ribbon.DefaultPropertiesFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Collections;
 
 /**
  * Created by charles on 2017/5/25.
  */
 @Configuration
-@EnableWebMvc
-public class CoreAutoConfiguration implements WebMvcConfigurer {
-
-//    @Autowired
-//    public OkHttpClientFactory okHttpClientFactory;
-
-    @Bean
-    public DefaultPropertiesFactory defaultPropertiesFactory() {
-        return new DefaultPropertiesFactory();
-    }
-
+public class CoreAutoConfiguration {
     @LoadBalanced
     @Bean
     public RestTemplate restTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-//        RestTemplate restTemplate = new RestTemplate(
-//                new OkHttp3ClientHttpRequestFactory(
-//                        okHttpClientFactory.createBuilder(true).build()));
-        restTemplate.getInterceptors().add(new CoreHttpRequestInterceptor());
-
-        return restTemplate;
+        return new RestTemplate();
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new CoreHeaderInterceptor());
+    @Bean
+    public Contract charlesSpringMvcContract(ConversionService conversionService) {
+        return new CharlesSpringMvcContract(Collections.emptyList(), conversionService);
+    }
+
+    @Bean
+    public CharlesRequestInterceptor charlesRequestInterceptor() {
+        return new CharlesRequestInterceptor();
     }
 }
