@@ -68,6 +68,7 @@
         <module>zuul</module>
         <module>provider</module>
         <module>consumer</module>
+        <module>provider-webflux</module>
     </modules>
 
     <repositories>
