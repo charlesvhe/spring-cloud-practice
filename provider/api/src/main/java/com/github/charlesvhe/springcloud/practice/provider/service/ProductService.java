@@ -39,7 +39,7 @@ public interface ProductService {
     @ApiOperation("按id查询详情")
     // 版本兼容api 随微服务整体升级 pt=protected 受保护的网关token验证合法可调用
     @ApiImplicitParam(name = "version", paramType = "path", allowableValues = ProviderApiAutoConfig.COMPATIBLE_VERSION, required = true)
-    @RequestMapping(value = "/{version}/pt/product/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{version}/pt/product/{id:\\d+}", method = RequestMethod.GET)
     Response<Product> selectById(@PathVariable("id") Long id);
 
     // 版本兼容api 随微服务整体升级 pt=protected 受保护的网关token验证合法可调用
