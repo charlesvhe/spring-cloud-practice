@@ -292,7 +292,7 @@ service实现类方法参数必须再写一次@RequestBody注解，方法上的@
 这样就能够顺利生产swagger文档啦。
 
 ### feign不支持GET方法传递POJO
-由于springMVC是支持GET方法直接绑定POJO的，只是feign实现并未覆盖所有springMVC特效，网上的很多变通方法都不是很好，要么是吧POJO拆散成一个一个单独的属性放在方法参数里，要么是把方法参数变成Map，要么就是要违反HTTP协议，GET传递@RequestBody：  
+由于springMVC是支持GET方法直接绑定POJO的，只是feign实现并未覆盖所有springMVC特效，网上的很多变通方法都不是很好，要么是吧POJO拆散成一个一个单独的属性放在方法参数里，要么是把方法参数变成Map，要么就是要违反Restful规范，GET传递@RequestBody：  
 https://www.jianshu.com/p/7ce46c0ebe9d  
 https://github.com/spring-cloud/spring-cloud-netflix/issues/1253  
 解决办法，使用feign拦截器：
