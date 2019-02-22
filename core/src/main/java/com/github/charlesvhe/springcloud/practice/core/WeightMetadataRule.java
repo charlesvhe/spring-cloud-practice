@@ -4,17 +4,16 @@ import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ZoneAvoidanceRule;
 import com.netflix.niws.loadbalancer.DiscoveryEnabledServer;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by charles on 2017/5/22.
  */
-public class LabelAndWeightMetadataRule extends ZoneAvoidanceRule {
-    public static final String META_DATA_KEY_LABEL_AND = "labelAnd";
-    public static final String META_DATA_KEY_LABEL_OR = "labelOr";
-
+public class WeightMetadataRule extends ZoneAvoidanceRule {
     public static final String META_DATA_KEY_WEIGHT = "weight";
 
     private Random random = new Random();
@@ -31,25 +30,6 @@ public class LabelAndWeightMetadataRule extends ZoneAvoidanceRule {
         Map<Server, Integer> serverWeightMap = new HashMap<>();
         for (Server server : serverList) {
             Map<String, String> metadata = ((DiscoveryEnabledServer) server).getInstanceInfo().getMetadata();
-
-            // 优先匹配label
-            String labelOr = metadata.get(META_DATA_KEY_LABEL_OR);
-            if(!StringUtils.isEmpty(labelOr)){
-                List<String> metadataLabel = Arrays.asList(labelOr.split(CoreHeaderInterceptor.HEADER_LABEL_SPLIT));
-                for (String label : metadataLabel) {
-                    if(CoreHeaderInterceptor.label.get().contains(label)){
-                        return server;
-                    }
-                }
-            }
-
-            String labelAnd = metadata.get(META_DATA_KEY_LABEL_AND);
-            if(!StringUtils.isEmpty(labelAnd)){
-                List<String> metadataLabel = Arrays.asList(labelAnd.split(CoreHeaderInterceptor.HEADER_LABEL_SPLIT));
-                if(CoreHeaderInterceptor.label.get().containsAll(metadataLabel)){
-                    return server;
-                }
-            }
 
             String strWeight = metadata.get(META_DATA_KEY_WEIGHT);
 

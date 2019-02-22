@@ -52,7 +52,7 @@ public class PreFilter extends ZuulFilter {
 
         logger.info("label: " + labels);
 
-        CoreHeaderInterceptor.initHystrixRequestContext(labels); // zuul本身调用微服务
+        CoreHeaderInterceptor.setLabel(labels); // zuul本身调用微服务
         ctx.addZuulRequestHeader(CoreHeaderInterceptor.HEADER_LABEL, labels); // 传递给后续微服务
 
         return null;

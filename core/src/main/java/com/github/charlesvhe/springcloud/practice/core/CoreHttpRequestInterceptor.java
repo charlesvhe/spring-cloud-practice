@@ -21,9 +21,9 @@ public class CoreHttpRequestInterceptor implements ClientHttpRequestInterceptor 
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         HttpRequestWrapper requestWrapper = new HttpRequestWrapper(request);
 
-        String header = StringUtils.collectionToDelimitedString(CoreHeaderInterceptor.label.get(), CoreHeaderInterceptor.HEADER_LABEL_SPLIT);
-        logger.info("label: "+header);
-        requestWrapper.getHeaders().add(CoreHeaderInterceptor.HEADER_LABEL, header);
+        String labels = StringUtils.collectionToDelimitedString(CoreHeaderInterceptor.label.get(), CoreHeaderInterceptor.HEADER_LABEL_SPLIT);
+        logger.info("label: "+labels);
+        requestWrapper.getHeaders().add(CoreHeaderInterceptor.HEADER_LABEL, labels);
 
         return execution.execute(requestWrapper, body);
     }
